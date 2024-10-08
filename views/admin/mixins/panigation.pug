@@ -1,0 +1,22 @@
+mixin panigation(panigation)
+    nav 
+        ul(class="pagination")
+            if(panigation.currentPage > 1)
+                li(class="page-item")
+                    button(
+                        class="page-link"
+                        button-panigation = panigation.currentPage - 1
+                        ) Trang trước
+
+            - for(var i = 1; i < panigation.totalPage + 1; i++)
+                li(class=`page-item ${panigation.currentPage == i ? "active" : ""}`)
+                    button(
+                        class="page-link"
+                        button-panigation = i
+                        ) #{i}
+            if(panigation.currentPage < panigation.totalPage) 
+                li(class="page-item")
+                    button(
+                        class="page-link"
+                        button-panigation = panigation.currentPage + 1
+                    ) Kế tiếp
