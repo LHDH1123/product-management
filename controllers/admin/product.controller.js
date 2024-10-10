@@ -120,7 +120,6 @@ module.exports.create = (req, res) => {
 };
 
 module.exports.createPost = async (req, res) => {
-
   req.body.price = parseInt(req.body.price);
   req.body.discountPercentage = parseInt(req.body.discountPercentage);
   req.body.stock = parseInt(req.body.stock);
@@ -162,7 +161,6 @@ module.exports.edit = async (req, res) => {
 };
 
 module.exports.editPatch = async (req, res) => {
-
   req.body.price = parseInt(req.body.price);
   req.body.discountPercentage = parseInt(req.body.discountPercentage);
   req.body.stock = parseInt(req.body.stock);
@@ -180,4 +178,23 @@ module.exports.editPatch = async (req, res) => {
   }
 
   res.redirect(`${systemConfig.prefixAdmin}/products`);
+};
+
+module.exports.detail = async (req, res) => {
+  try {
+    const find = {
+      deleted: false,
+      _id: req.params.id,
+    };
+
+    const product = await Product.findOne(find);
+    console.log(product);
+
+    res.render("admin/pages/products/detail", {
+      titlePage: product.title,
+      product: product,
+    });
+  } catch (error) {
+    res.redirect(`${systemConfig.prefixAdmin}/products`);
+  }
 };
