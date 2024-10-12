@@ -44,7 +44,7 @@ module.exports.index = async (req, res) => {
     panigation: objectPage,
   });
 };
-
+// [PATCH] /admin/products/change-status/:status/:id
 module.exports.changStatus = async (req, res) => {
   const status = req.params.status;
   const id = req.params.id;
@@ -53,7 +53,7 @@ module.exports.changStatus = async (req, res) => {
   req.flash("success", "Cập nhật trạng thái thành công!");
   res.redirect("back");
 };
-
+// [PATCH] /admin/products/change-multi
 module.exports.changeMulti = async (req, res) => {
   const type = req.body.type;
   const ids = req.body.ids.split(", ");
@@ -96,7 +96,7 @@ module.exports.changeMulti = async (req, res) => {
   }
   res.redirect("back");
 };
-
+// [DELETE] /admin/products/delete/:id
 module.exports.deleteItem = async (req, res) => {
   const id = req.params.id;
   //Xóa trong DB
@@ -112,13 +112,13 @@ module.exports.deleteItem = async (req, res) => {
   req.flash("success", `Xóa sản phẩm thành công!`);
   res.redirect("back");
 };
-
+// [GET] /admin/products/create
 module.exports.create = (req, res) => {
   res.render("admin/pages/products/create", {
     titlePage: "Thêm mới sản phẩm",
   });
 };
-
+// [POST] /admin/products/create
 module.exports.createPost = async (req, res) => {
   req.body.price = parseInt(req.body.price);
   req.body.discountPercentage = parseInt(req.body.discountPercentage);
@@ -140,7 +140,7 @@ module.exports.createPost = async (req, res) => {
 
   res.redirect(`${systemConfig.prefixAdmin}/products`);
 };
-
+// [GET] /admin/products/edit/:id
 module.exports.edit = async (req, res) => {
   try {
     const find = {
@@ -159,7 +159,7 @@ module.exports.edit = async (req, res) => {
     res.redirect(`${systemConfig.prefixAdmin}/products`);
   }
 };
-
+// [PATCH] /admin/products/edit/:id
 module.exports.editPatch = async (req, res) => {
   req.body.price = parseInt(req.body.price);
   req.body.discountPercentage = parseInt(req.body.discountPercentage);
@@ -179,7 +179,7 @@ module.exports.editPatch = async (req, res) => {
 
   res.redirect(`${systemConfig.prefixAdmin}/products`);
 };
-
+// [GET] /admin/products/detail/:id
 module.exports.detail = async (req, res) => {
   try {
     const find = {
