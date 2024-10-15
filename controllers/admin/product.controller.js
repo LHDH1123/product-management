@@ -201,3 +201,9 @@ module.exports.detail = async (req, res) => {
     res.redirect(`${systemConfig.prefixAdmin}/products`);
   }
 };
+// [GET] /admin/products-category
+module.exports.category = async (req, res) => {
+  res.render("admin/pages/products-category/category", {
+    titlePage: "Trang danh mục sản phẩm",
+  });
+}
