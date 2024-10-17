@@ -127,21 +127,25 @@ module.exports.create = (req, res) => {
 };
 // [POST] /admin/products/create
 module.exports.createPost = async (req, res) => {
-  req.body.price = parseInt(req.body.price);
-  req.body.discountPercentage = parseInt(req.body.discountPercentage);
-  req.body.stock = parseInt(req.body.stock);
-
-  if (req.body.position == "") {
-    const countProduct = await Product.countDocuments();
-    req.body.position = countProduct + 1;
-  } else {
-    req.body.position = parseInt(req.body.position);
+  try {
+    req.body.price = parseInt(req.body.price);
+    req.body.discountPercentage = parseInt(req.body.discountPercentage);
+    req.body.stock = parseInt(req.body.stock);
+  
+    if (req.body.position == "") {
+      const countProduct = await Product.countDocuments();
+      req.body.position = countProduct + 1;
+    } else {
+      req.body.position = parseInt(req.body.position);
+    }
+  
+    const product = new Product(req.body);
+    await product.save();
+  
+    res.redirect(`${systemConfig.prefixAdmin}/products`);
+  } catch (error) {
+    console.error('Đã xảy ra lỗi:', error);
   }
-
-  const product = new Product(req.body);
-  await product.save();
-
-  res.redirect(`${systemConfig.prefixAdmin}/products`);
 };
 // [GET] /admin/products/edit/:id
 module.exports.edit = async (req, res) => {
