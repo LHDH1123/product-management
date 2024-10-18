@@ -1,15 +1,11 @@
 extends ../../layouts/default.pug
-include ../../mixins/alert.pug
 include ../../mixins/select-tree.pug
 
 block main
-  +alert-error()
-
-  h1(class="mb-4") #{titlePage}
+  h1 #{titlePage}
 
   form(
-    action=`${prefixAdmin}/products/create`
-    id="form-create-product"
+    action=`${prefixAdmin}/products-category/edit/${category.id}?_method=PATCH`
     method="POST"
     enctype="multipart/form-data"
   )
@@ -21,56 +17,33 @@ block main
         id="title"
         name="title"
         required
-      )
+        value=category.title
+      ) 
     div(class="form-group")
-      label(for="product_category_id") Danh mục cha
+      label(for="parent_id") Danh mục cha
       select(
         class="form-control"
-        id="product_category_id"
-        name="product_category_id"
+        id="parent_id"
+        name="parent_id"
       )
         option(value="") -- Chọn danh mục --
-        if (category)
-          +select-tree(category)
+          +select-tree(listCategory, 1, category.parent_id)
     div(class="form-group")
+    div #{category.parent_id}
       label(for="desc") Mô tả
       textarea(
+        type="text"
         class="form-control textarea-mce"
         id="desc"
         name="description"
         rows="5"
-      )
-    div(class="form-group")
-      label(for="price") Giá
-      input(
-        type="number"
-        class="form-control"
-        id="price"
-        name="price"
-        value="0"
-        min="0"
-      )
-    div(class="form-group")
-      label(for="discount") % Giảm giá
-      input(
-        type="number"
-        class="form-control"
-        id="discount"
-        name="discountPercentage"
-        value="0"
-        min="0"
-      )
-    div(class="form-group")
-      label(for="stock") Số lượng
-      input(
-        type="number"
-        class="form-control"
-        id="stock"
-        name="stock"
-        value="0"
-        min="0"
-      )
-    div(class="form-group" upload-image)
+        textarea-mce
+        value=category.description
+      ) #{category.description}
+    div(
+      class="form-group"
+      upload-image
+    )
       label(for="thumbnail") Ảnh
       input(
         type="file"
@@ -81,7 +54,7 @@ block main
         upload-image-input
       )
       img(
-        src=""
+        src=category.thumbnail
         class="image-preview"
         upload-image-preview
       )
@@ -94,7 +67,8 @@ block main
         name="position"
         placeholder="Tự động tăng"
         min="1"
-      )
+        value=`${category.position}`
+      ) 
     div(class="form-group form-check form-check-inline")
       input(
         type="radio"
@@ -102,7 +76,7 @@ block main
         id="statusActive"
         name="status"
         value="active"
-        checked
+        checked=(category.status == "active" ? true : false)
       )
       label(for="statusActive" class="form-check-label") Hoạt động
     div(class="form-group form-check form-check-inline")
@@ -112,10 +86,11 @@ block main
         id="statusInActive"
         name="status"
         value="inactive"
+        checked=(category.status == "inactive" ? true : false)
       )
       label(for="statusInActive" class="form-check-label") Dừng hoạt động
     div(class="form-group")
       button(
         type="submit"
         class="btn btn-primary"
-      ) Tạo mới
+      ) Cập nhật

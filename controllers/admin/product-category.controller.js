@@ -43,3 +43,32 @@ module.exports.createPost = async (req, res) => {
 
   res.redirect(`${systemConfig.prefixAdmin}/products-category`);
 };
+// [GET] /admin/products-category/edit/:id
+module.exports.edit = async (req, res) => {
+  const listCategory = await ProductCategory.find({
+    deleted: false,
+  });
+
+  const category = await ProductCategory.findOne({
+    deleted: false,
+    _id: req.params.id,
+  });
+
+  res.render("admin/pages/products-category/edit", {
+    titlePage: "Chỉnh sửa danh mục sản phẩm",
+    category: category,
+    listCategory: listCategory,
+  });
+};
+// [PATCH] /admin/products-category/edit/:id
+module.exports.editPatch = async (req, res) => {
+  req.body.position = parseInt(req.body.position);
+  await ProductCategory.updateOne(
+    {
+      _id: req.params.id,
+    },
+    req.body
+  );
+
+  res.redirect(`${systemConfig.prefixAdmin}/products-category`);
+};

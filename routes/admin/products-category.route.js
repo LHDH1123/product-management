@@ -12,10 +12,22 @@ router.get("/", controller.index);
 
 router.get("/create", controller.create);
 
-router.post("/create",
+router.post(
+  "/create",
   upload.single("thumbnail"),
   uploadCloudinary.upload,
   validates.createPost,
-  controller.createPost);
+  controller.createPost
+);
+
+router.get("/edit/:id", controller.edit);
+
+router.patch(
+  "/edit/:id",
+  upload.single("thumbnail"),
+  uploadCloudinary.upload,
+  validates.createPost,
+  controller.editPatch
+);
 
 module.exports = router;

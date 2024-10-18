@@ -1,9 +1,10 @@
 const Product = require("../../models/product.model");
+const Category = require("../../models/product-category.model")
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchStatusHelper = require("../../helpers/search");
 const panigationHelper = require("../../helpers/panigation");
 const systemConfig = require("../../config/system");
-
+const createTreeHelper = require("../../helpers/createTree");
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
   const filterStatus = filterStatusHelper(req.query);
@@ -32,7 +33,7 @@ module.exports.index = async (req, res) => {
   );
 
   let sort = {};
-  if(req.query.sortKey && req.query.sortValue) {
+  if (req.query.sortKey && req.query.sortValue) {
     sort[req.query.sortKey] = req.query.sortValue;
   } else {
     sort.position = "desc";
@@ -120,9 +121,14 @@ module.exports.deleteItem = async (req, res) => {
   res.redirect("back");
 };
 // [GET] /admin/products/create
-module.exports.create = (req, res) => {
+module.exports.create = async (req, res) => {
+  const category = await Category.find({
+    deleted: false,
+  });
+  const newCategory = createTreeHelper.tree(category);
   res.render("admin/pages/products/create", {
     titlePage: "Thêm mới sản phẩm",
+    category: newCategory
   });
 };
 // [POST] /admin/products/create
@@ -131,20 +137,20 @@ module.exports.createPost = async (req, res) => {
     req.body.price = parseInt(req.body.price);
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
-  
+
     if (req.body.position == "") {
       const countProduct = await Product.countDocuments();
       req.body.position = countProduct + 1;
     } else {
       req.body.position = parseInt(req.body.position);
     }
-  
+
     const product = new Product(req.body);
     await product.save();
-  
+
     res.redirect(`${systemConfig.prefixAdmin}/products`);
   } catch (error) {
-    console.error('Đã xảy ra lỗi:', error);
+    console.error("Đã xảy ra lỗi:", error);
   }
 };
 // [GET] /admin/products/edit/:id
@@ -195,7 +201,6 @@ module.exports.detail = async (req, res) => {
     };
 
     const product = await Product.findOne(find);
-    console.log(product);
 
     res.render("admin/pages/products/detail", {
       titlePage: product.title,
@@ -210,4 +215,4 @@ module.exports.category = async (req, res) => {
   res.render("admin/pages/products-category/category", {
     titlePage: "Trang danh mục sản phẩm",
   });
-}
+};
