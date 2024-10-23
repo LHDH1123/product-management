@@ -50,3 +50,40 @@ module.exports.createPost = async (req, res) => {
     res.redirect(`${systemConfig.prefixAdmin}/accounts`);
   }
 };
+// [GET] /admin/accounts/edit
+module.exports.edit = async (req, res) => {
+  let find = {
+    _id: req.params.id,
+    deleted: false,
+  };
+
+  const records = await Account.findOne(find);
+  const roles = await Role.find({ deleted: false });
+  res.render("admin/pages/accounts/edit", {
+    titlePage: "Cập nhật tài khoản",
+    account: records,
+    roles: roles,
+  });
+};
+// [PATCH] /admin/accounts/edit
+module.exports.editPatch = async (req, res) => {
+  const emailExits = await Account.findOne({
+    _id: { $ne: id },
+    email: req.body.email,
+    deleted: false,
+  });
+
+  if (emailExits) {
+    req.flash("error", `Email ${req.body.email} đã tồn tại`);
+    res.redirect("back");
+  } else {
+    await Account.updateOne(
+      {
+        _id: req.params.id,
+      },
+      req.body
+    );
+    req.flash("success", `Cập nhật thành công`);
+  }
+  res.redirect(`${systemConfig.prefixAdmin}/accounts`);
+};
