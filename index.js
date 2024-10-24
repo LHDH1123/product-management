@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("express-flash");
+const moment = require("moment");
 const multer = require("multer");
 require("dotenv").config();
 
@@ -36,6 +37,7 @@ app.use(
 );
 
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
+app.locals.moment = moment;
 
 app.use(express.static(`${__dirname}/public`)); //__dirname để vừa chạy local và onl
 

@@ -1,10 +1,11 @@
 const Product = require("../../models/product.model");
-const Category = require("../../models/product-category.model")
+const Category = require("../../models/product-category.model");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchStatusHelper = require("../../helpers/search");
 const panigationHelper = require("../../helpers/panigation");
 const systemConfig = require("../../config/system");
 const createTreeHelper = require("../../helpers/createTree");
+const Account = require("../../models/account.model");
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
   const filterStatus = filterStatusHelper(req.query);
@@ -43,6 +44,15 @@ module.exports.index = async (req, res) => {
     .sort(sort)
     .limit(objectPage.limitItem)
     .skip(objectPage.skipItem);
+
+  for (const product of products) {
+    const user = await Account.findOne({
+      _id: product.createdBy.account_id,
+    });
+    if (user) {
+      product.accountFullName = user.fullName;
+    }
+  }
 
   res.render("admin/pages/products/index", {
     titlePage: "Trang danh sách sản phẩm",
@@ -83,7 +93,10 @@ module.exports.changeMulti = async (req, res) => {
         { _id: { $in: ids } },
         {
           deleted: true,
-          deletedAt: new Date(),
+          deletedBy: {
+            account_id: res.locals.user.id,
+            deletedAt: new Date(),
+          },
         }
       );
       req.flash("success", `Đã xóa ${ids.length} sản phẩm thành công!`);
@@ -114,9 +127,13 @@ module.exports.deleteItem = async (req, res) => {
     { _id: id },
     {
       deleted: true,
-      deletedAt: new Date(),
+      deletedBy: {
+        account_id: res.locals.user.id,
+        deletedAt: new Date(),
+      },
     }
   );
+
   req.flash("success", `Xóa sản phẩm thành công!`);
   res.redirect("back");
 };
@@ -128,7 +145,7 @@ module.exports.create = async (req, res) => {
   const newCategory = createTreeHelper.tree(category);
   res.render("admin/pages/products/create", {
     titlePage: "Thêm mới sản phẩm",
-    category: newCategory
+    category: newCategory,
   });
 };
 // [POST] /admin/products/create
@@ -144,6 +161,11 @@ module.exports.createPost = async (req, res) => {
     } else {
       req.body.position = parseInt(req.body.position);
     }
+    console.log(res.locals.user.id);
+
+    req.body.createdBy = {
+      account_id: res.locals.user.id,
+    };
 
     const product = new Product(req.body);
     await product.save();
@@ -168,7 +190,9 @@ module.exports.edit = async (req, res) => {
 
     const product = await Product.findOne(find);
 
-    const category_id = await Category.findOne({_id: product.product_category_id});
+    const category_id = await Category.findOne({
+      _id: product.product_category_id,
+    });
 
     res.render("admin/pages/products/edit", {
       titlePage: "Sửa sản phẩm",

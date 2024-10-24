@@ -57,6 +57,7 @@ block main
                             th Giá
                             th Vị trí
                             th Trạng thái
+                            th Người tạo
                             th Hành động
 
                         tbody
@@ -86,6 +87,7 @@ block main
                                             min="1"
                                             name="position"
                                             )
+                                    
                                     td
                                         if(role.permissions.includes("products_edit"))
                                             if(item.status == "active")
@@ -104,6 +106,9 @@ block main
                                                     button-change-status
                                                     class="badge badge-danger"
                                                     ) Dừng hoạt động
+                                    td 
+                                        p #{item.accountFullName}
+                                        p #{moment(item.createdBy.createAt).format("DD/MM/YYYY HH:mm:ss")}
                                     td
                                         a(
                                             href=`${prefixAdmin}/products/detail/${item.id}`
