@@ -67,23 +67,29 @@ module.exports.edit = async (req, res) => {
 };
 // [PATCH] /admin/accounts/edit
 module.exports.editPatch = async (req, res) => {
-  const emailExits = await Account.findOne({
-    _id: { $ne: id },
-    email: req.body.email,
-    deleted: false,
-  });
+  try {
+    const emailExits = await Account.findOne({
+      _id: { $ne: req.params.id },
+      email: req.body.email,
+      deleted: false,
+    });
 
-  if (emailExits) {
-    req.flash("error", `Email ${req.body.email} đã tồn tại`);
+    if (emailExits) {
+      req.flash("error", `Email ${req.body.email} đã tồn tại`);
+      res.redirect("back");
+    } else {
+      await Account.updateOne(
+        {
+          _id: req.params.id,
+        },
+        req.body
+      );
+      req.flash("success", `Cập nhật thành công`);
+    }
+    res.redirect(`${systemConfig.prefixAdmin}/accounts`);
+  } catch (error) {
+    console.log(error);
+    req.flash("error", `Cập nhật thất bại`);
     res.redirect("back");
-  } else {
-    await Account.updateOne(
-      {
-        _id: req.params.id,
-      },
-      req.body
-    );
-    req.flash("success", `Cập nhật thành công`);
   }
-  res.redirect(`${systemConfig.prefixAdmin}/accounts`);
 };

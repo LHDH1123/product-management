@@ -1,8 +1,9 @@
 extends ../../layouts/default.pug
+include ../../mixins/alert.pug
 
 block main
   h1(class="mb-4") #{pageTitle}
-
+  +alert-error()
   form(
     action=`${prefixAdmin}/accounts/edit/${account.id}?_method=PATCH`
     method="POST"

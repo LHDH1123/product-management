@@ -3,10 +3,15 @@ const Account = require("../../models/account.model");
 const systemConfig = require("../../config/system");
 
 // [GET] /admin/auth/login
-module.exports.login = (req, res) => {
-  res.render("admin/pages/auth/login", {
-    titlePage: "Trang đăng nhập",
-  });
+module.exports.login = async (req, res) => {
+  const user = await Account.findOne({ token: req.cookies.token });
+  if (req.cookies.token && user) {
+    res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
+  } else {
+    res.render("admin/pages/auth/login", {
+      titlePage: "Trang đăng nhập",
+    });
+  }
 };
 // [POST] /admin/auth/login
 module.exports.loginPost = async (req, res) => {
