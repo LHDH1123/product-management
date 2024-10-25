@@ -58,7 +58,7 @@ module.exports.index = async (req, res) => {
         _id: updatedBy.account_id,
       });
       if (userUpdatedBy) {
-        updatedBy.accountFullName = userUpdatedBy.fullName;
+        product.accountFullName = userUpdatedBy.fullName;
       }
     }
   }
@@ -265,6 +265,7 @@ module.exports.editPatch = async (req, res) => {
   }
 
   res.redirect(`${systemConfig.prefixAdmin}/products`);
+  // res.redirect("back");
 };
 // [GET] /admin/products/detail/:id
 module.exports.detail = async (req, res) => {
