@@ -185,29 +185,35 @@ module.exports.create = async (req, res) => {
 };
 // [POST] /admin/products/create
 module.exports.createPost = async (req, res) => {
-  try {
-    req.body.price = parseInt(req.body.price);
-    req.body.discountPercentage = parseInt(req.body.discountPercentage);
-    req.body.stock = parseInt(req.body.stock);
+  const permission = res.locals.role.permissions;
 
-    if (req.body.position == "") {
-      const countProduct = await Product.countDocuments();
-      req.body.position = countProduct + 1;
-    } else {
-      req.body.position = parseInt(req.body.position);
+  if (permission.includes("products_create")) {
+    try {
+      req.body.price = parseInt(req.body.price);
+      req.body.discountPercentage = parseInt(req.body.discountPercentage);
+      req.body.stock = parseInt(req.body.stock);
+
+      if (req.body.position == "") {
+        const countProduct = await Product.countDocuments();
+        req.body.position = countProduct + 1;
+      } else {
+        req.body.position = parseInt(req.body.position);
+      }
+      console.log(res.locals.user.id);
+
+      req.body.createdBy = {
+        account_id: res.locals.user.id,
+      };
+
+      const product = new Product(req.body);
+      await product.save();
+
+      res.redirect(`${systemConfig.prefixAdmin}/products`);
+    } catch (error) {
+      console.error("Đã xảy ra lỗi:", error);
     }
-    console.log(res.locals.user.id);
-
-    req.body.createdBy = {
-      account_id: res.locals.user.id,
-    };
-
-    const product = new Product(req.body);
-    await product.save();
-
-    res.redirect(`${systemConfig.prefixAdmin}/products`);
-  } catch (error) {
-    console.error("Đã xảy ra lỗi:", error);
+  } else {
+    return;
   }
 };
 // [GET] /admin/products/edit/:id
