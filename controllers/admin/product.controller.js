@@ -199,7 +199,6 @@ module.exports.createPost = async (req, res) => {
       } else {
         req.body.position = parseInt(req.body.position);
       }
-      console.log(res.locals.user.id);
 
       req.body.createdBy = {
         account_id: res.locals.user.id,
