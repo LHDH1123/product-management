@@ -53,7 +53,10 @@ module.exports.detail = async (req, res) => {
 module.exports.category = async (req, res) => {
   const category = await ProductCategory.findOne({
     slug: req.params.slugCategory,
+    deleted: false,
+    status: "active",
   });
+
   const listCategory = await productsCategoryHelper.getSubCategory(category.id);
 
   const listCategoryId = listCategory.map((item) => item.id);
