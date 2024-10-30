@@ -36,13 +36,13 @@ block main
                       name="quantity"
                       value=item.quantity
                       min="1"
-                      item-id=item.productId
+                      product-id=item.product_id
                       style="width: 60px"
                     )
                   td #{item.totalPrice.toLocaleString()}$
                   td
                     a(
-                      href=`/cart/delete/${item.productId}`
+                      href=`/cart/delete/${item.product_id}`
                       class="btn btn-danger"
                     ) Xóa
           
@@ -54,3 +54,6 @@ block main
         else
           p
             i Không có sản phẩm nào trong giỏ hàng.
+
+
+  script(src="/js/cart.js") 

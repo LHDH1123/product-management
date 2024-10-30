@@ -32,9 +32,6 @@ module.exports.addPost = async (req, res) => {
   const productId = req.params.productId;
   const quantity = req.body.quantity;
   const cartId = req.cookies.cartId;
-  console.log(productId);
-  console.log(quantity);
-  console.log(cartId);
 
   const cart = await Cart.findOne({
     _id: cartId,
@@ -70,5 +67,36 @@ module.exports.addPost = async (req, res) => {
     );
   }
   req.flash("success", "Đã thêm sản phẩm vào giỏ hàng");
+  res.redirect("back");
+};
+//[GET] /cart/delete/:productId
+module.exports.delete = async (req, res) => {
+  const cartId = req.cookies.cartId;
+  const productId = req.params.productId;
+  await Cart.updateOne(
+    { _id: cartId },
+    { $pull: { products: { product_id: productId } } }
+  );
+  req.flash("success", "Đã thêm xóa sản phẩm ra khỏi giỏ hàng");
+  res.redirect("back");
+};
+//[GET] /cart/update/:productId/:quantity
+module.exports.updateQuantity = async (req, res) => {
+  const productId = req.params.productId;
+  const quantity = req.params.quantity;
+  const cartId = req.cookies.cartId;
+
+  await Cart.updateOne(
+    {
+      _id: cartId,
+      "products.product_id": productId,
+    },
+    {
+      $set: {
+        "products.$.quantity": quantity,
+      },
+    }
+  );
+  req.flash("success", "Cập nhật số lượng thành công");
   res.redirect("back");
 };
