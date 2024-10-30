@@ -35,7 +35,7 @@ header.header
               a(href="/products") Sản phẩm
               +sub-category(category)
             li
-              a(href="/cart") Giỏ hàng (#{miniCart})
+              a(href="/cart") Giỏ hàng (#{miniCart ? miniCart.totalQuantity : 0})
             if(user)
               li
                 a(href="/user/profile") #{user.fullName}
