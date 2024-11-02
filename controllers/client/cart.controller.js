@@ -85,7 +85,7 @@ module.exports.updateQuantity = async (req, res) => {
   const productId = req.params.productId;
   const quantity = req.params.quantity;
   const cartId = req.cookies.cartId;
-
+  
   await Cart.updateOne(
     {
       _id: cartId,
